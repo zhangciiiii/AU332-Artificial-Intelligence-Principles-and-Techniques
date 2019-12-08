@@ -35,6 +35,13 @@ def main():
         depth_images = os.listdir(args.dataset_dir+'/'+one_scene+'/depth')
         depth_images = sorted(depth_images, key=embedded_numbers)
 
+        with open(args.dataset_dir+'/'+one_scene+'/groundtruth.txt') as gt:
+            gt_list = gt.readlines()
+            # Path(args.dump_root+'/'+one_scene+'/'+'pose.txt').makedirs_p()
+            with open ((args.dump_root+'/'+one_scene+'/'+'pose.txt'),'w') as pose:
+                for line in gt_list[2:]:
+                    pose.write(str(line).lstrip('\n'))
+        
         scene_id = 0
         for rgb_image, depth_image in tqdm(zip(rgb_images, depth_images)):
 
@@ -43,6 +50,7 @@ def main():
             Image.fromarray(rgb_image).save(rgb_image_dir/str(scene_id).zfill(4)+'.png')
             Image.fromarray(depth_image).save(depth_image_dir/str(scene_id).zfill(4)+'.png')
             scene_id += 1
+        
 
 
 
