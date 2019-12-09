@@ -6,7 +6,7 @@ import random
 import os
 
 
-def crawl_folders(folders_list, sequence_length):
+def crawl_folders(root, folders_list, sequence_length):
     '''
     return a list which contains lots of samples : 
     sample = { 'rgb_tgt': rgb_imgs[i], 'rgb_ref_imgs': [], 'depth_tgt': depth_imgs[i], 'depth_ref_imgs': []}
@@ -14,10 +14,11 @@ def crawl_folders(folders_list, sequence_length):
     sequence_set = []
     demi_length = (sequence_length-1)//2
     for folder in folders_list:
+        folder = Path(root/folder)
         rgb_folder = folder/'rgb'
         depth_folder = folder/'depth'
-        rgb_imgs = sorted(rgb_folder.files('*.png'))
-        depth_imgs = sorted(depth_folder.files('*.png'))
+        rgb_imgs = sorted(rgb_folder.files('*.jpg'))
+        depth_imgs = sorted(depth_folder.files('*.jpg'))
         if len(rgb_imgs) < sequence_length:
             continue
 
@@ -48,7 +49,7 @@ class SequenceFolder(data.Dataset):
         self.sequence_length = sequence_length
         self.root = Path(root)
         self.scenes = os.listdir(self.root)
-        self.samples = crawl_folders(self.scenes, sequence_length)
+        self.samples = crawl_folders(self.root, self.scenes, sequence_length)
         self.transform = transform
         self.intrinsics = intrinsics
 
@@ -56,15 +57,16 @@ class SequenceFolder(data.Dataset):
         sample = self.samples[index]
         rgb_tgt_img = load_as_float(sample['rgb_tgt'])
         rgb_ref_imgs = [load_as_float(ref_img) for ref_img in sample['rgb_ref_imgs']]
-        depth_tgt_img = load_as_float(sample['depth_tgt'])
-        depth_ref_imgs = [load_as_float(ref_img) for ref_img in sample['depth_ref_imgs']]
+        depth_tgt_img = load_as_float(sample['depth_tgt'])# [:, :, np.newaxis]
+        depth_ref_imgs = [load_as_float(ref_img)for ref_img in sample['depth_ref_imgs']]
         
         if self.transform is not None:
             imgs, intrinsics = self.transform([rgb_tgt_img] + rgb_ref_imgs + [depth_tgt_img] + depth_ref_imgs, np.copy(self.intrinsics))
             rgb_tgt_img = imgs[0]
-            rgb_ref_imgs = imgs[1:self.sequence_length-1]
+            rgb_ref_imgs = imgs[1:self.sequence_length]
             depth_tgt_img = imgs[self.sequence_length]
             depth_ref_imgs = imgs[self.sequence_length+1:]
+            # print(len(imgs),len(rgb_ref_imgs),len(depth_ref_imgs),)
         else:
             intrinsics = np.copy(self.intrinsics)
         return rgb_tgt_img, rgb_ref_imgs, depth_tgt_img, depth_ref_imgs, intrinsics, np.linalg.inv(intrinsics)
