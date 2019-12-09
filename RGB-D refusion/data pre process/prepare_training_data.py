@@ -47,8 +47,8 @@ def main():
 
             rgb_image = resize_image(args.dataset_dir+'/'+one_scene+'/rgb/'+rgb_image) # numpy array
             depth_image = resize_image(args.dataset_dir+'/'+one_scene+'/depth/'+depth_image)
-            Image.fromarray(rgb_image).save(rgb_image_dir/str(scene_id).zfill(4)+'.png')
-            Image.fromarray(depth_image).save(depth_image_dir/str(scene_id).zfill(4)+'.png')
+            Image.fromarray(rgb_image).convert("RGB").save(rgb_image_dir/str(scene_id).zfill(4)+'.jpg')
+            Image.fromarray(depth_image).save(depth_image_dir/str(scene_id).zfill(4)+'.jpg')
             scene_id += 1
         
 
