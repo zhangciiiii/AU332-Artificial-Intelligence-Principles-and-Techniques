@@ -1,0 +1,96 @@
+
+
+ssh远程连接命令：
+ssh -L 5067:127.0.0.1:5051 -L 5051:127.0.0.1:5067 wgm@202.120.37.249 -p 9999
+
+ssh -L 5053:127.0.0.1:5051 -L 5054:127.0.0.1:5052 wxr@202.120.37.249 -p 9997
+
+
+开启一个docker：
+nohup nvidia-docker run  -i --name 'cjw_torch'  -v /home/hxs/data0/:/data -p  6100:6006 -p 6101:22  --ipc=host ufoym/deepo:latest  bash &
+
+
+重新进入docker：docker exec -it cc_pytorch_zc /bin/bash
+
+docker exec -it wxr2 /bin/bash
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           docker exec -it wxr_27 /bin/bash
+
+重启已停止的容器：docker start
+
+查看已有的container：docker ps -a
+查看磁盘文件：df -hl
+删除镜像：docker rmi ed9c，删除容器docker rm 59ec
+更新软件源： sudo apt-get -y update
+查看GPU使用情况：watch -n 1 nvidia-smi
+显示所有进程，之后用kill pid命令终止进程：ps -ef
+
+打开tensorboard：tensorboard --logdir=./ --port=6006
+删除文件夹：rm -rf 文件夹名/
+
+sudo scp  -r  -P 9997  /home/wgm/data0/zc/scene_flow/HPLFlowNet-master   sjtu@202.120.37.249:/data0/yyh/data
+
+
+
+
+
+nohup nvidia-docker run  -i --name 'sf_zc'  -v /home/wgm/data0/zc/:/data -p  6051:6006 -p 6052:22  --ipc=host ufoym/deepo:tensorflow-py36-cu100  bash &
+
+nohup nvidia-docker run  -i --name 'sf_zc'  -v /home/wgm/data0/zc/:/data -p  6051:6006 -p 6052:22  --ipc=host ufoym/deepo:all-py36-cu100  bash &
+
+docker exec -it sf_zc /bin/bash
+
+nohup nvidia-docker run  -i --name 'wxr_27'  -v /home/wxr/data0/:/data -p  6110:6006 -p 6111:22  --ipc=host ufoym/deepo:all-py27-cu90  bash &
+nohup nvidia-docker run  -i --name 'wxr_27'  -v /data0/wxr:/data/ -p  7410:6006 -p 7411:22  --ipc=host ufoym/deepo:all-py27-cu90  bash &
+
+conda create -n python27 python=2.7
+source activate python27
+conda remove -n python27 --all
+
+python3 train.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/pre-png  --batch-size 4    \
+--mask-loss-weight 0.05  --smooth-loss-weight 0.05 --consensus-loss-weight 1.0 --flow-loss-weight 2.0   \
+--epoch-size 1000  --nlevels 6 --lr 1e-4 -wssim 0.7   \
+--pretrained-mask  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/deemo4/masknet_checkpoint.pth.tar  \
+--pretrained-pose  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/deemo4/posenet_checkpoint.pth.tar \
+--pretrained-flow  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/deemo4/flownet_checkpoint.pth.tar \
+--epochs 100  --name flow2
+
+python3 train.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/pre-png  --batch-size 4    \
+--mask-loss-weight 0.05  --smooth-loss-weight 0.02 --consensus-loss-weight 1.0 --flow-loss-weight 2.0   \
+--epoch-size 1000  --nlevels 6 --lr 1e-4 -wssim 0.7   \
+--pretrained-mask  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/PreTainedFlow/masknet_checkpoint.pth.tar  \
+--pretrained-pose  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/PreTainedFlow/posenet_checkpoint.pth.tar \
+--pretrained-flow  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/PreTainedFlow/flownet_checkpoint.pth.tar \
+--epochs 100  --name smooth_flow
+
+python3 train.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/pre-png  --batch-size 4    \
+--mask-loss-weight 0.05  --smooth-loss-weight 0.005 --consensus-loss-weight 1.0 --flow-loss-weight 2.0   \
+--epoch-size 1000  --nlevels 6 --lr 1e-4 -wssim 0.7   \
+--pretrained-mask  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/PreTainedFlow/masknet_checkpoint.pth.tar  \
+--pretrained-pose  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/PreTainedFlow/posenet_checkpoint.pth.tar \
+--pretrained-flow  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/PreTainedFlow/flownet_checkpoint.pth.tar \
+--epochs 100  --name little_flow
+
+python3 train.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/pre-png  --batch-size 4    \
+--mask-loss-weight 0.05  --smooth-loss-weight 0.005 --consensus-loss-weight 0.0 --flow-loss-weight 2.0   \
+--epoch-size 1000  --nlevels 6 --lr 1e-4 -wssim 0.7   \
+--pretrained-mask  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/little_flow/masknet_checkpoint.pth.tar  \
+--pretrained-pose  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/little_flow/posenet_checkpoint.pth.tar \
+--pretrained-flow  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/little_flow/flownet_checkpoint.pth.tar \
+--epochs 100  --name just_flow
+
+python3 train.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/pre-png  --batch-size 4    \
+--mask-loss-weight 0.05  --smooth-loss-weight 0.05 --consensus-loss-weight 0.01 --flow-loss-weight 2.0   \
+--epoch-size 1000  --nlevels 6 --lr 1e-4 -wssim 0.7   \
+--pretrained-mask  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/deemo3/masknet_checkpoint.pth.tar \
+--pretrained-pose  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/deemo3/posenet_checkpoint.pth.tar \
+--epochs 100  --name deemo4
+
+python3 train.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/pre-png  --batch-size 4    \
+--mask-loss-weight 0.05  --smooth-loss-weight 0.005 --consensus-loss-weight 0.0 --flow-loss-weight 2.0   \
+--epoch-size 1000  --nlevels 6 --lr 1e-4 -wssim 0.7   \
+--pretrained-mask  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/trained_model/masknet.pth.tar  \
+--pretrained-pose  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/trained_model/posenet_model_best.pth.tar \
+--pretrained-flow  /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/trained_model/back2future.pth.tar \
+--fix-flownet  --fix-posenet --fix-masknet \
+--epochs 100  --name trained_flow
+
