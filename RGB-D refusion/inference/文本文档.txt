@@ -1,0 +1,4 @@
+python inference.py --dataset_dir /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/inference/rgb  \
+--pretrained-mask /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/gt_mask/masknet_model_best.pth.tar \
+--pretrained-pose /home/zhang/documents/data/curriculum/3D-reconstruction/DeepRefusion/checkpoints/gt_mask/posenet_model_best.pth.tar --name deemo
+
